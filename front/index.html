@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#05040F;
+  --surface:rgba(255,255,255,0.04);
+  --surface2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(120,90,255,0.35);
+  --txt:#F0EEF8;
+  --txt2:#9B97B4;
+  --txt3:#635E7D;
+  --blue:#4F8EF7;
+  --purple:#8B5CF6;
+  --r:14px;
+  --r-sm:8px;
+}
+
+html{scroll-behavior:smooth}
+
+body, button, input{
+  font-family:'Inter',sans-serif;
+}
+
+body{
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  top:-20vh;left:-10vw;
+  width:60vw;height:60vh;
+  background:radial-gradient(ellipse,rgba(79,142,247,0.07) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;
+  bottom:-20vh;right:-10vw;
+  width:60vw;height:60vh;
+  background:radial-gradient(ellipse,rgba(139,92,246,0.09) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:60px;
+  background:rgba(5,4,15,0.75);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+
+section{position:relative;z-index:1}
+
+.hero {
+  text-align: center;
+  padding: 80px 20px 40px; 
+  max-width: 640px;
+  margin: 0 auto;
+}
+.hero h1 {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #fff 0%, var(--blue) 50%, var(--purple) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+.hero p {
+  font-size: 15px;
+  color: var(--txt2);
+  line-height: 1.6;
+}
+.upload-section{
+  max-width:640px;margin:0 auto;
+  padding:0 20px 80px;
+}
+
+#drop-zone{
+  border:1.5px dashed rgba(79,142,247,0.35);
+  border-radius:18px;
+  padding:56px 32px;
+  text-align:center;
+  cursor:pointer;
+  background:var(--surface);
+  transition:border-color 0.2s,background 0.2s,box-shadow 0.2s;
+  position:relative;
+  overflow:hidden;
+}
+#drop-zone::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(79,142,247,0.06) 0%,transparent 70%);
+  pointer-events:none;
+}
+#drop-zone:hover,#drop-zone.drag-over{
+  border-color:var(--blue);
+  background:rgba(79,142,247,0.06);
+  box-shadow:0 0 32px rgba(79,142,247,0.12),inset 0 0 32px rgba(79,142,247,0.04);
+}
+.dz-icon{
+  width:52px;height:52px;margin:0 auto 18px;
+  background:linear-gradient(135deg,rgba(79,142,247,0.15),rgba(139,92,246,0.15));
+  border:1px solid rgba(79,142,247,0.25);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  transition:box-shadow 0.2s;
+}
+#drop-zone:hover .dz-icon{box-shadow:0 0 20px rgba(79,142,247,0.25)}
+.dz-icon svg{width:22px;height:22px;color:var(--blue)}
+.dz-title{font-size:15px;font-weight:500;margin-bottom:6px}
+.dz-sub{font-size:13px;color:var(--txt2)}
+
+#file-pill{
+  display:none;
+  margin-top:12px;
+  align-items:center;gap:12px;
+  padding:12px 16px;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:10px;
+}
+.pill-ico{
+  width:34px;height:34px;flex-shrink:0;
+  background:rgba(79,142,247,0.12);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+}
+.pill-ico svg{width:16px;height:16px;color:var(--blue)}
+.pill-meta{flex:1;min-width:0}
+.pill-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pill-size{font-size:11px;color:var(--txt3);margin-top:2px}
+.pill-rm{
+  width:26px;height:26px;border:none;
+  background:transparent;cursor:pointer;
+  color:var(--txt3);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.1s,color 0.1s;
+}
+.pill-rm:hover{background:rgba(239,68,68,0.12);color:#F87171}
+
+#scan-btn{
+  margin-top:16px;width:100%;height:46px;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  border:none;border-radius:10px;
+  font-size:15px;font-weight:600;
+  color:#fff;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity 0.15s,transform 0.1s;
+  box-shadow:0 4px 20px rgba(79,142,247,0.25);
+}
+#scan-btn:disabled{opacity:0.35;cursor:not-allowed;box-shadow:none}
+#scan-btn:not(:disabled):hover{opacity:0.92}
+#scan-btn:not(:disabled):active{transform:scale(0.99)}
+
+#progress-wrap{display:none;margin-top:20px}
+.prog-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:22px 24px;
+}
+.prog-title{font-size:13px;font-weight:500;margin-bottom:18px;color:var(--txt2)}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;align-items:flex-start;gap:14px;position:relative}
+.step:not(:last-child)::after{
+  content:'';position:absolute;
+  left:14px;top:30px;bottom:-6px;
+  width:1px;background:var(--border);z-index:0;
+}
+.step-dot{
+  width:29px;height:29px;border-radius:50%;
+  border:1.5px solid var(--border);
+  background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;z-index:1;
+  transition:all 0.25s;
+}
+.step.active .step-dot{border-color:var(--blue);background:rgba(79,142,247,0.12)}
+.step.done .step-dot{border-color:#22C55E;background:rgba(34,197,94,0.1)}
+.step-label{
+  padding:5px 0 20px;
+  font-size:13px;color:var(--txt3);
+  transition:color 0.2s;
+}
+.step.active .step-label,.step.done .step-label{color:var(--txt)}
+.spin{
+  width:12px;height:12px;
+  border:1.5px solid rgba(79,142,247,0.3);
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:spin 0.65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.idle-dot{width:7px;height:7px;border-radius:50%;background:var(--border)}
+.chk{display:none}
+.step.done .chk{display:block}
+.step.done .spin,.step.done .idle-dot{display:none}
+.step.active .idle-dot{display:none}
+.step:not(.active):not(.done) .spin{display:none}
+
+#result-wrap{display:none;margin-top:20px}
+.result-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  overflow:hidden;
+}
+.result-top{
+  padding:18px 24px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:10px;
+}
+.result-type-badge{
+  padding:5px 14px;border-radius:20px;
+  background:rgba(79,142,247,0.1);
+  border:1px solid rgba(79,142,247,0.25);
+  color:var(--blue);font-size:13px;font-weight:500;
+}
+.result-file{
+  font-size:11px;color:var(--txt3);
+}
+.result-body{padding:20px 24px}
+.result-summary{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:8px;
+  border-left:3px solid var(--purple);
+  padding:12px 16px;
+  font-size:13px;color:var(--txt2);
+  line-height:1.65;margin-bottom:20px;
+}
+.fields-title{
+  font-size:10px;text-transform:uppercase;letter-spacing:0.8px;
+  color:var(--txt3);font-weight:600;margin-bottom:10px;
+}
+.fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:440px){.fields-grid{grid-template-columns:1fr}}
+.field-item{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:8px;padding:12px 14px;
+}
+.field-key{font-size:10px;text-transform:uppercase;letter-spacing:0.6px;color:var(--txt3);margin-bottom:5px;font-weight:500}
+.field-val{font-size:13px;color:var(--txt);font-weight:500}
+.field-val.empty{color:var(--txt3);font-style:italic;font-weight:400}
+.result-actions{
+  padding:14px 24px;
+  border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;
+}
+.ghost-btn{
+  height:34px;padding:0 16px;
+  border:1px solid var(--border);
+  background:transparent;
+  border-radius:var(--r-sm);
+  font-size:13px;
+  color:var(--txt2);cursor:pointer;
+  transition:border-color 0.15s,color 0.15s;
+}
+.ghost-btn:hover{border-color:var(--border2);color:var(--txt)}
+
+#error-wrap{
+  display:none;margin-top:16px;
+  background:rgba(239,68,68,0.07);
+  border:1px solid rgba(239,68,68,0.2);
+  border-radius:10px;padding:14px 18px;
+}
+.err-title{font-size:13px;font-weight:500;color:#F87171;margin-bottom:4px}
+.err-msg{font-size:12px;color:#FCA5A5}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-text">Document Scanner</span>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Scan Documents</h1>
+  <p>Upload any PDF and AI will analyze it and return a structured description of the document.</p>
+</section>
+
+<section class="upload-section">
+  <div id="drop-zone" role="button" tabindex="0" aria-label="Upload document">
+    <div class="dz-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </div>
+    <div class="dz-title">Drop your file here</div>
+    <div class="dz-sub">or click anywhere to upload (PDF up to 50 MB)</div>
+    <input type="file" id="file-input" accept=".pdf" style="display: none;"/>
+  </div>
+
+  <div id="file-pill">
+    <div class="pill-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </div>
+    <div class="pill-meta">
+      <div class="pill-name" id="pill-name"></div>
+      <div class="pill-size" id="pill-size"></div>
+    </div>
+    <button class="pill-rm" onclick="clearFile()" aria-label="Remove">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <button id="scan-btn" disabled onclick="classify()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Analyse document
+  </button>
+
+  <div id="progress-wrap">
+    <div class="prog-card">
+      <div class="prog-title">Analysing your document…</div>
+      <div class="steps">
+        <div class="step" id="s0">
+          <div class="step-dot"><div class="idle-dot"></div><div class="spin"></div><svg class="chk" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="step-label">Uploading file</div>
+        </div>
+        <div class="step" id="s1">
+          <div class="step-dot"><div class="idle-dot"></div><div class="spin"></div><svg class="chk" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="step-label">Extracting text</div>
+        </div>
+        <div class="step" id="s2">
+          <div class="step-dot"><div class="idle-dot"></div><div class="spin"></div><svg class="chk" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="step-label">AI extraction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="result-wrap">
+    <div class="result-card">
+      <div class="result-top">
+        <div class="result-type-badge" id="r-type"></div>
+        <div class="result-file" id="r-file"></div>
+      </div>
+      <div class="result-body">
+        <div class="result-summary" id="r-summary"></div>
+        <div class="fields-title">Extracted fields</div>
+        <div class="fields-grid">
+          <div class="field-item"><div class="field-key">Full name</div><div class="field-val" id="f-name"></div></div>
+          <div class="field-item"><div class="field-key">Date</div><div class="field-val" id="f-date"></div></div>
+          <div class="field-item"><div class="field-key">Document number</div><div class="field-val" id="f-num"></div></div>
+          <div class="field-item"><div class="field-key">Issuing authority</div><div class="field-val" id="f-auth"></div></div>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="ghost-btn" onclick="reset()">← New document</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="error-wrap">
+    <div class="err-title">Something went wrong</div>
+    <div class="err-msg" id="err-msg"></div>
+  </div>
+</section>
+ 
+<script>
+const API = 'http://localhost:8000';
+let file = null;
+ 
+const dz = document.getElementById('drop-zone');
+const fi = document.getElementById('file-input');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) pick(f); });
+dz.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') fi.click(); });
+fi.addEventListener('change', e => { if (e.target.files[0]) pick(e.target.files[0]); });
+ 
+function pick(f) {
+  file = f;
+  document.getElementById('pill-name').textContent = f.name;
+  document.getElementById('pill-size').textContent = (f.size/1024).toFixed(1) + ' KB';
+  document.getElementById('file-pill').style.display = 'flex';
+  document.getElementById('scan-btn').disabled = false;
+  hide('error-wrap'); hide('result-wrap');
+}
+ 
+function clearFile() {
+  file = null; fi.value = '';
+  document.getElementById('file-pill').style.display = 'none';
+  document.getElementById('scan-btn').disabled = true;
+}
+ 
+async function classify() {
+  if (!file) return;
+  document.getElementById('scan-btn').disabled = true;
+  hide('result-wrap'); hide('error-wrap');
+  show('progress-wrap');
+  setStep(0,'active');
+ 
+  const fd = new FormData();
+  fd.append('file', file);
+ 
+  try {
+    const res = await fetch(`${API}/classify`, {method:'POST', body:fd});
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.detail || `Server error ${res.status}`);
+    }
+    
+    setStep(0,'done'); 
+    setStep(1,'active');
+    
+    const data = await res.json();
+    
+    setStep(1,'done'); 
+    setStep(2,'active');
+    
+    setStep(2,'done');
+    showResult(data);
+  } catch(err) {
+    hide('progress-wrap');
+    document.getElementById('err-msg').textContent = err.message || 'Could not reach the server.';
+    show('error-wrap');
+    document.getElementById('scan-btn').disabled = false;
+  }
+}
+ 
+function showResult(data) {
+  const r = data.result, f = r.fields || {};
+  document.getElementById('r-type').textContent = r.document_type || 'Unknown';
+  document.getElementById('r-file').textContent = data.filename;
+  document.getElementById('r-summary').textContent = r.summary || '';
+  setField('f-name', f.full_name);
+  setField('f-date', f.date);
+  setField('f-num', f.document_number);
+  setField('f-auth', f.issuing_authority);
+  hide('progress-wrap');
+  show('result-wrap');
+}
+ 
+function setField(id, val) {
+  const el = document.getElementById(id);
+  el.textContent = val || 'Not found';
+  el.className = 'field-val' + (val ? '' : ' empty');
+}
+ 
+function setStep(i, state) {
+  const s = document.getElementById('s'+i);
+  s.classList.remove('active','done');
+  if (state) s.classList.add(state);
+}
+ 
+function reset() {
+  clearFile();
+  hide('result-wrap'); hide('progress-wrap'); hide('error-wrap');
+  [0,1,2].forEach(i=>setStep(i,''));
+}
+ 
+function show(id){document.getElementById(id).style.display='block'}
+function hide(id){document.getElementById(id).style.display='none'}
+</script>
+</body>
+</html>
